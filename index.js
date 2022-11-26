@@ -18,9 +18,11 @@ const client = new MongoClient(uri, {
 });
 
 const run = async () => {
-  const categoryCollection = client.db("cellsaleDB").collection("categories");
-
   try {
+    const categoryCollection = client.db("cellsaleDB").collection("categories");
+    const bookingsCollection = client.db("cellsaleDB").collection("bookings");
+    const usersCollection = client.db("cellsaleDB").collection("users");
+
     app.get("/categories", async (req, res) => {
       const query = {};
       const categories = await categoryCollection.find(query).toArray();
@@ -31,6 +33,24 @@ const run = async () => {
       const filter = { _id: ObjectId(id) };
       const category = await categoryCollection.findOne(filter);
       res.send(category);
+    });
+    app.get("/bookings", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await bookingsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.post("/bookings", async (req, res) => {
+      const booking = req.body;
+      const result = await bookingsCollection.insertOne(booking);
+      res.send(result);
+    });
+
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
     });
   } finally {
   }
