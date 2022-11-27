@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
+const jwt = require("jsonwebtoken");
 const port = process.env.PORT || 5000;
 
 const app = express();
@@ -22,6 +23,7 @@ const run = async () => {
     const categoryCollection = client.db("cellsaleDB").collection("categories");
     const bookingsCollection = client.db("cellsaleDB").collection("bookings");
     const usersCollection = client.db("cellsaleDB").collection("users");
+    const sellersCollection = client.db("cellsaleDB").collection("sellers");
 
     app.get("/categories", async (req, res) => {
       const query = {};
@@ -47,9 +49,29 @@ const run = async () => {
       res.send(result);
     });
 
+    app.get("/jwt", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      if (user) {
+        const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, {
+          expiresIn: "1h",
+        });
+        return res.send({ accessToken: token });
+      }
+      console.log(user);
+      res.status(403).send({ accessToken: "" });
+    });
+
     app.post("/users", async (req, res) => {
       const user = req.body;
       const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
+
+    app.post("/sellers", async (req, res) => {
+      const seller = req.body;
+      const result = await usersCollection.insertOne(seller);
       res.send(result);
     });
   } finally {
