@@ -72,7 +72,7 @@ const run = async () => {
     //   const option = { upsert: true };
     //   const updatedUser = {
     //     $set: {
-    //       products: product,
+    //       products: product
     //     },
     //   };
     //   const result = await categoryCollection.insertOne(query);
