@@ -49,6 +49,13 @@ const run = async () => {
       res.send(categories);
     });
 
+    app.get("/category/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const category = await categoryCollection.findOne(filter);
+      res.send(category);
+    });
+
     app.get("/categoriesname", async (req, res) => {
       const query = {};
       const result = await categoryCollection
@@ -57,13 +64,6 @@ const run = async () => {
         .toArray();
       res.send(result);
     });
-
-    // app.get("/category/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const filter = { _id: ObjectId(id) };
-    //   const category = await categoryCollection.findOne(filter);
-    //   res.send(category);
-    // });
 
     // app.put("/categories/:name", async (req, res) => {
     //   const category = req.params.name;
